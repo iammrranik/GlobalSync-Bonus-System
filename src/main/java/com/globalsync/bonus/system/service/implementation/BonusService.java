@@ -32,6 +32,32 @@ public class BonusService implements IBonusService {
     @Override
     @Transactional
     public BonusRecord calculateAndSaveBonus(PerformanceReview review) {
+
+        if (review.getReviewYear() == null || review.getReviewYear() < 2000) {
+            throw new IllegalArgumentException("Review year must be valid.");
+        }
+        if (review.getTaskCompletionRate() < 0 || review.getTaskCompletionRate() > 25) {
+            throw new IllegalArgumentException("Task Completion Rate must be between 0 and 25.");
+        }
+        if (review.getAttendanceAndPunctuality() < 0 || review.getAttendanceAndPunctuality() > 15) {
+            throw new IllegalArgumentException("Attendance & Punctuality must be between 0 and 15.");
+        }
+        if (review.getTeamCollaboration() < 0 || review.getTeamCollaboration() > 15) {
+            throw new IllegalArgumentException("Team Collaboration must be between 0 and 15.");
+        }
+        if (review.getProblemSolvingSkill() < 0 || review.getProblemSolvingSkill() > 15) {
+            throw new IllegalArgumentException("Problem Solving Skill must be between 0 and 15.");
+        }
+        if (review.getCommunicationSkill() < 0 || review.getCommunicationSkill() > 10) {
+            throw new IllegalArgumentException("Communication Skill must be between 0 and 10.");
+        }
+        if (review.getLeadershipAndInitiative() < 0 || review.getLeadershipAndInitiative() > 10) {
+            throw new IllegalArgumentException("Leadership & Initiative must be between 0 and 10.");
+        }
+        if (review.getClientSatisfaction() < 0 || review.getClientSatisfaction() > 10) {
+            throw new IllegalArgumentException("Client Satisfaction must be between 0 and 10.");
+        }
+
         Employee employee = employeeRepository.findById(review.getEmployeeId())
                 .orElseThrow(() -> new IllegalArgumentException("Employee not found with ID: " + review.getEmployeeId()));
 
