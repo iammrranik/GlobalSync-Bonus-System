@@ -1,0 +1,26 @@
+"ElitePerformance" Corporate Bonus API
+======================================
+
+1. Employee Management
+Action,Method,Endpoint,Sample JSON Body / Parameters
+Add Employee (Example 1),POST,/api/employees,{"name": "Anik Rahman", "designation": "Software Engineer", "baseSalary": 55000.0, "role": "EMPLOYEE", "lastPromotionDate": "2025-01-15"}
+Add Employee (Example 2),POST,/api/employees,{"name": "Nusrat Jahan", "designation": "Senior Developer", "baseSalary": 85000.0, "role": "MANAGER", "lastPromotionDate": "2024-06-10"}
+Update Employee,PUT,/api/employees/{id},{"name": "Anik Rahman", "designation": "Senior Engineer", "baseSalary": 65000.0, "role": "EMPLOYEE", "lastPromotionDate": "2026-05-18"}
+Get Employee,GET,/api/employees/{id},No body required. Example: /api/employees/1
+List Employees,GET,/api/employees/{p}/{s},No body. Example (Page 1, Size 10): /api/employees/1/10
+Delete Employee,DELETE,/api/employees/{id},No body required. Example: /api/employees/1
+
+2. Performance Review Management
+Action,Method,Endpoint,Sample JSON Body / Parameters
+Add Review (Example 1),POST,/api/performance-reviews,{"employeeId": 1, "reviewYear": 2026, "taskCompletionRate": 23, "attendanceAndPunctuality": 14, "teamCollaboration": 13, "problemSolvingSkill": 14, "communicationSkill": 9, "leadershipAndInitiative": 8, "clientSatisfaction": 9}
+Add Review (Example 2),POST,/api/performance-reviews,{"employeeId": 2, "reviewYear": 2026, "taskCompletionRate": 21, "attendanceAndPunctuality": 13, "teamCollaboration": 12, "problemSolvingSkill": 11, "communicationSkill": 8, "leadershipAndInitiative": 9, "clientSatisfaction": 8}
+Get Review,GET,/api/performance-reviews/{id},No body required. Example: /api/performance-reviews/1
+List Reviews,GET,/api/performance-reviews/{p}/{s},No body. Example (Page 1, Size 5): /api/performance-reviews/1/5
+Total Count,GET,/api/performance-reviews/count,No body. Returns an integer (e.g., 12)
+
+3. Payout & Calculation Logic
+Action,Method,Endpoint,Request Details / Sample JSON Body
+Calculate Bonus (Example 1),POST,/api/bonus-records/calculate,{"employeeId": 1, "reviewYear": 2026, "taskCompletionRate": 23, "attendanceAndPunctuality": 14, "teamCollaboration": 13, "problemSolvingSkill": 14, "communicationSkill": 9, "leadershipAndInitiative": 8, "clientSatisfaction": 9}
+Calculate Bonus (Example 2),POST,/api/bonus-records/calculate,{"employeeId": 2, "reviewYear": 2026, "taskCompletionRate": 21, "attendanceAndPunctuality": 13, "teamCollaboration": 12, "problemSolvingSkill": 11, "communicationSkill": 8, "leadershipAndInitiative": 9, "clientSatisfaction": 8}
+View Bonus Record,GET,/api/bonus-records/{id},No body required. Example: /api/bonus-records/1
+View All Payouts,GET,/api/bonus-records/{p}/{s},No body. Example (Page 1, Size 10): /api/bonus-records/1/10

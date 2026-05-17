@@ -1,0 +1,218 @@
+========================================================================
+"ELITEPERFORMANCE" CORPORATE BONUS API SYSTEM - SUBMISSION TEXT FILE
+========================================================================
+
+------------------------------------------------------------------------
+PART 1: REST API ENDPOINT DOCUMENTATION
+------------------------------------------------------------------------
+
+1. Employee Management
+-----------------------
+Action: Add Employee
+Method: POST
+Endpoint: /api/employees
+Sample JSON Body:
+{
+  "name": "Tahsin Ahmed",
+  "designation": "Software Engineer",
+  "baseSalary": 55000.0,
+  "role": "EMPLOYEE",
+  "lastPromotionDate": "2025-01-15"
+}
+
+Action: Update Employee
+Method: PUT
+Endpoint: /api/employees/{id}
+Sample JSON Body:
+{
+  "name": "Tahsin Ahmed",
+  "designation": "Senior Engineer",
+  "baseSalary": 65000.0,
+  "role": "EMPLOYEE",
+  "lastPromotionDate": "2026-05-18"
+}
+
+Action: Get Employee
+Method: GET
+Endpoint: /api/employees/{id}
+Parameters: No body required. Example: /api/employees/1
+
+Action: List Employees
+Method: GET
+Endpoint: /api/employees
+Parameters: Supports pagination parameters. Example: /api/employees?page=1&size=10
+
+Action: Delete Employee
+Method: DELETE
+Endpoint: /api/employees/{id}
+Parameters: No body required. Example: /api/employees/1
+
+
+2. Performance Review Management
+---------------------------------
+Action: Add Review
+Method: POST
+Endpoint: /api/performance-reviews
+Sample JSON Body:
+{
+  "employeeId": 1,
+  "reviewYear": 2026,
+  "taskCompletionRate": 23,
+  "attendanceAndPunctuality": 14,
+  "teamCollaboration": 13,
+  "problemSolvingSkill": 14,
+  "communicationSkill": 9,
+  "leadershipAndInitiative": 8,
+  "clientSatisfaction": 9
+}
+
+Action: Get Review
+Method: GET
+Endpoint: /api/performance-reviews/{id}
+Parameters: No body required. Example: /api/performance-reviews/1
+
+Action: List Reviews
+Method: GET
+Endpoint: /api/performance-reviews
+Parameters: Supports pagination parameters. Example: /api/performance-reviews?page=1&size=5
+
+Action: Total Count
+Method: GET
+Endpoint: /api/performance-reviews/count
+Parameters: No body. Returns an integer (e.g., 12)
+
+
+3. Payout & Calculation Logic
+------------------------------
+Action: Calculate Bonus
+Method: POST
+Endpoint: /api/performances/calculate
+Request Details: Accepts raw employee KPI points via JSON body, runs validation, saves the performance review record, computes bonus metrics based on corporate tier policies, commits the transaction, and maps out the finalized payout record payload.
+
+Action: View Bonus Record
+Method: GET
+Endpoint: /api/bonus-records/{id}
+Parameters: No body required. Example: /api/bonus-records/1
+
+Action: View All Payouts
+Method: GET
+Endpoint: /api/bonus-records
+Parameters: Supports pagination parameters. Example: /api/bonus-records?page=1&size=10
+
+
+------------------------------------------------------------------------
+PART 2: MISSING APPLICATION COMPONENTS (SOURCE CODE)
+------------------------------------------------------------------------
+
+FILE 1: SecurityConfig.java
+PATH: com.globalsync.bonus.system.config.SecurityConfig.java
+------------------------------------------------------------------------
+package com.globalsync.bonus.system.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.web.SecurityFilterChain;
+
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig {
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+            .csrf(csrf -> csrf.disable())
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers(HttpMethod.POST, "/api/performances/calculate").hasRole("MANAGER")
+                .requestMatchers(HttpMethod.POST, "/api/performance-reviews/**").hasRole("MANAGER")
+                .requestMatchers("/api/employees/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.GET, "/api/bonus-records/**").hasAnyRole("ADMIN", "EMPLOYEE")
+                .anyRequest().authenticated()
+            )
+            .httpBasic(Customizer.withDefaults());
+
+        return http.build();
+    }
+
+    @Bean
+    public UserDetailsService userDetailsService() {
+        UserDetails admin = User.withDefaultPasswordEncoder()
+                .username("admin")
+                .password("admin123")
+                .roles("ADMIN")
+                .build();
+
+        UserDetails manager = User.withDefaultPasswordEncoder()
+                .username("manager")
+                .password("manager123")
+                .roles("MANAGER")
+                .build();
+
+        UserDetails employee = User.withDefaultPasswordEncoder()
+                .username("employee")
+                .password("emp123")
+                .roles("EMPLOYEE")
+                .build();
+
+        return new InMemoryUserDetailsManager(admin, manager, employee);
+    }
+}
+
+
+FILE 2: BonusService.java (Validation Block snippet)
+PATH: Place inside com.globalsync.bonus.system.service.implementation.BonusService.java
+------------------------------------------------------------------------
+// Place these validation boundary rules right inside the starting body of the calculateAndSaveBonus method:
+
+if (review.getReviewYear() == null || review.getReviewYear() < 2000) {
+    throw new IllegalArgumentException("Review year must be valid.");
+}
+if (review.getTaskCompletionRate() < 0 || review.getTaskCompletionRate() > 25) {
+    throw new IllegalArgumentException("Task Completion Rate must be between 0 and 25.");
+}
+if (review.getAttendanceAndPunctuality() < 0 || review.getAttendanceAndPunctuality() > 15) {
+    throw new IllegalArgumentException("Attendance & Punctuality must be between 0 and 15.");
+}
+if (review.getTeamCollaboration() < 0 || review.getTeamCollaboration() > 15) {
+    throw new IllegalArgumentException("Team Collaboration must be between 0 and 15.");
+}
+if (review.getProblemSolvingSkill() < 0 || review.getProblemSolvingSkill() > 15) {
+    throw new IllegalArgumentException("Problem Solving Skill must be between 0 and 15.");
+}
+if (review.getCommunicationSkill() < 0 || review.getCommunicationSkill() > 10) {
+    throw new IllegalArgumentException("Communication Skill must be between 0 and 10.");
+}
+if (review.getLeadershipAndInitiative() < 0 || review.getLeadershipAndInitiative() > 10) {
+    throw new IllegalArgumentException("Leadership & Initiative must be between 0 and 10.");
+}
+if (review.getClientSatisfaction() < 0 || review.getClientSatisfaction() > 10) {
+    throw new IllegalArgumentException("Client Satisfaction must be between 0 and 10.");
+}
+
+
+FILE 3: GlobalExceptionHandler.java
+PATH: com.globalsync.bonus.system.exception.GlobalExceptionHandler.java
+------------------------------------------------------------------------
+package com.globalsync.bonus.system.exception;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<String> handleBadRequest(IllegalArgumentException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+}
+========================================================================
