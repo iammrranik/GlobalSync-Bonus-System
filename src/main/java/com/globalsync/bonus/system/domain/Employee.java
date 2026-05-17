@@ -10,11 +10,12 @@ public class Employee {
     private Integer id;
     private String name;
     private String designation;
-    private Double baseSalary;
+    private Float baseSalary;
     private EmployeeRole role;
     private LocalDate lastPromotionDate;
 
-    public Employee(Integer id, String name, String designation, Double baseSalary, EmployeeRole role, LocalDate lastPromotionDate) {
+    public Employee(Integer id, String name, String designation,
+                    Float baseSalary, EmployeeRole role, LocalDate lastPromotionDate) {
         this.setId(id);
         this.setName(name);
         this.setDesignation(designation);
@@ -47,11 +48,11 @@ public class Employee {
         this.designation = designation;
     }
 
-    public Double getBaseSalary() {
+    public Float getBaseSalary() {
         return baseSalary;
     }
 
-    public void setBaseSalary(Double baseSalary) {
+    public void setBaseSalary(Float baseSalary) {
         this.baseSalary = baseSalary;
     }
 
