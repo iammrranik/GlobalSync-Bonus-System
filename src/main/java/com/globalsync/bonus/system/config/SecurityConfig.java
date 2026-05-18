@@ -46,7 +46,6 @@ public class SecurityConfig {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        // Set up in-memory users with passwords and exact roles for testing and viva presentation
         UserDetails admin = User.withDefaultPasswordEncoder()
                 .username("admin")
                 .password("admin123")
